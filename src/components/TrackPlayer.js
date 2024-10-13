@@ -26,23 +26,41 @@ const colors = {
   playlistTextHoverActive: "#ffffff",
 };
 
-const Player1 = () => {
+const TrackPlayer = () => {
   const [tracks, setTracks] = useState([]);
+  const [currentTrack, setCurrentTrack] = useState(null);
 
   useEffect(() => {
     axios.get('http://localhost:3001/files')
       .then((response) => {
-        const fetchedTracks = response.data.map(file => ({
+        const formattedTracks = response.data.map(file => ({
           url: file.url,
           title: file.title,
-          tags: [file.title]
+          tags: [file.title],
+          imageUrl: file.imageUrl
         }));
-        setTracks(fetchedTracks);
+        setTracks(formattedTracks);
+        console.log('Fetched tracks:', formattedTracks);
       })
       .catch((error) => {
         console.error('Error fetching tracks', error);
       });
   }, []);
+
+  const handleTrackSelect = (track) => {
+    setCurrentTrack(track);
+    axios.post('http://localhost:3001/select-track', track, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(() => {
+      console.log('Track selected and sent to server:', track);
+    })
+    .catch((error) => {
+      console.error('Error sending track to server', error);
+    });
+  };
 
   return (
     <div>
@@ -53,14 +71,16 @@ const Player1 = () => {
           includeSearch={false}
           showPlaylist={true}
           sortTracks={true}
-          autoPlayNextTrack={true}
+          autoPlayNextTrack={false}
           customColorScheme={colors}
+          onTrackClick={handleTrackSelect}  // Aquí se envía automáticamente el mensaje
         />
       ) : (
         <p>Loading...</p>
       )}
     </div>
   );
-}
+};
 
-export default Player1;
+export default TrackPlayer;
+
