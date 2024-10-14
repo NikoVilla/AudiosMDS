@@ -38,12 +38,28 @@ const TrackPlayer = () => {
     });
   };
 
+  const handleTrackStop = () => {
+    setCurrentTrack(null);
+    axios.post('http://localhost:3001/select-track', {}, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(() => {
+      console.log('Track stopped and sent to server');
+    })
+    .catch((error) => {
+      console.error('Error sending stop to server', error);
+    });
+  };
+
   return (
     <div>
       {tracks.length > 0 ? (
         <AudioPlayer
           tracks={tracks}
           onTrackSelect={handleTrackSelect}
+          onTrackStop={handleTrackStop}
         />
       ) : (
         <p>Loading...</p>

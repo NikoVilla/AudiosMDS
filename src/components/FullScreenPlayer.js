@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import logo from './../logo-b-MDS-casino-oso.png'
 
 const FullScreenPlayer = () => {
   const [track, setTrack] = useState(null);
@@ -16,6 +17,7 @@ const FullScreenPlayer = () => {
             console.log('Track and imageUrl set:', currentTrack);
           } else {
             console.log('No track found on server');
+            setTrack(null); // Resetear el estado del track a null si no se encuentra ningún track
           }
         })
         .catch((error) => {
@@ -30,6 +32,23 @@ const FullScreenPlayer = () => {
 
     return () => clearInterval(intervalId);
   }, []);
+
+  useEffect(() => {
+    const handleAudioEnded = () => {
+      setTrack(null); // Resetear el estado del track a null cuando el audio termina
+    };
+
+    const audioElement = document.getElementById('audio-player');
+    if (audioElement) {
+      audioElement.addEventListener('ended', handleAudioEnded);
+    }
+
+    return () => {
+      if (audioElement) {
+        audioElement.removeEventListener('ended', handleAudioEnded);
+      }
+    };
+  }, [track]);
 
   return (
     <div style={{ 
@@ -48,10 +67,14 @@ const FullScreenPlayer = () => {
             height: '100%', 
             objectFit: 'cover' 
           }} />
-          <audio src={track.url} autoPlay />
+          <audio id="audio-player" src={track.url} autoPlay />
         </>
       ) : (
-        <p style={{ color: 'white', textAlign: 'center', marginTop: '20%' }}>No track found</p>
+        <img src={logo} alt="Default" style={{ 
+          width: '100%', 
+          height: '100%', 
+          objectFit: 'cover' 
+        }} />
       )}
     </div>
   );

@@ -29,7 +29,7 @@ app.get('/files', (req, res) => {
 });
 
 app.post('/select-track', (req, res) => {
-  currentTrack = req.body;
+  currentTrack = req.body.url ? req.body : null; // Asigna null si no hay URL (indica estado de "stop")
   console.log('Track selected on server:', currentTrack);
   res.sendStatus(200);
 });

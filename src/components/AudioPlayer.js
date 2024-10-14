@@ -3,7 +3,7 @@ import { IconButton } from '@mui/material';
 import StopIcon from '@mui/icons-material/Stop';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
-const AudioPlayer = ({ tracks, onTrackSelect }) => {
+const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isStopped, setIsStopped] = useState(false);
@@ -15,8 +15,7 @@ const AudioPlayer = ({ tracks, onTrackSelect }) => {
     } else {
       audioRef.current.pause();
     }
-    onTrackSelect(tracks[currentTrackIndex]);
-  }, [isPlaying, currentTrackIndex, tracks, onTrackSelect]);
+  }, [isPlaying, currentTrackIndex]);
 
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
@@ -28,6 +27,7 @@ const AudioPlayer = ({ tracks, onTrackSelect }) => {
     audioRef.current.currentTime = 0;
     setIsPlaying(false);
     setIsStopped(true);
+    onTrackStop();
   };
 
   const handleRestart = () => {
@@ -38,13 +38,16 @@ const AudioPlayer = ({ tracks, onTrackSelect }) => {
 
   const handleTrackClick = (index) => {
     setCurrentTrackIndex(index);
+    onTrackSelect(tracks[index]);
     setIsPlaying(true);
     setIsStopped(false);
   };
 
+  const currentTrack = tracks[currentTrackIndex];
+
   return (
     <div className="audio-player" style={{ backgroundColor: '#18191f', color: 'white', padding: '20px', borderRadius: '10px' }}>
-      <audio ref={audioRef} src={tracks[currentTrackIndex].url} onEnded={() => setIsPlaying(false)} />
+      <audio ref={audioRef} src={currentTrack.url} onEnded={handleStop}  />
       <div className="playlist" style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
         {tracks.map((track, index) => (
           <div 
