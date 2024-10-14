@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { IconButton } from '@mui/material';
 import StopIcon from '@mui/icons-material/Stop';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
@@ -30,12 +29,6 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
     onTrackStop();
   };
 
-  const handleRestart = () => {
-    audioRef.current.currentTime = 0;
-    setIsPlaying(true);
-    setIsStopped(false);
-  };
-
   const handleTrackClick = (index) => {
     setCurrentTrackIndex(index);
     onTrackSelect(tracks[index]);
@@ -47,11 +40,11 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
 
   return (
     <div className="audio-player" style={{ backgroundColor: '#18191f', color: 'white', padding: '20px', borderRadius: '10px' }}>
-      <audio ref={audioRef} src={currentTrack.url} onEnded={handleStop}  />
+      <audio ref={audioRef} src={currentTrack.url} onEnded={handleStop} />
       <div className="playlist" style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
         {tracks.map((track, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             onClick={() => handleTrackClick(index)}
             className={`track ${index === currentTrackIndex ? 'active' : ''}`}
             style={{
@@ -73,20 +66,11 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
           </div>
         ))}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <IconButton onClick={handleStop} style={{ color: 'white', fontSize: '2rem' }}>
-                <StopIcon style={{ fontSize: '2.5rem', color:'#D42A2A'}} />
-                </IconButton>
-                {/* <Typography style={{ color: 'white' }}>Pausa</Typography> */}
-            </div>
-            {isStopped && (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                <IconButton onClick={handleRestart} style={{ color: 'white', fontSize: '2rem' }}>
-                    <RestartAltIcon style={{ fontSize: '2rem' }} />
-                </IconButton>
-                {/* <Typography style={{ color: 'white' }}>Reiniciar</Typography> */}
-            </div>
-            )}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <IconButton onClick={handleStop} style={{ color: 'white', fontSize: '2rem' }}>
+              <StopIcon style={{ fontSize: '2.5rem', color: '#D42A2A' }} />
+            </IconButton>
+          </div>
         </div>
       </div>
     </div>

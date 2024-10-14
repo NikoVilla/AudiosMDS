@@ -22,14 +22,14 @@ app.get('/files', (req, res) => {
       index: 1,
       url: 'http://localhost:3001/superjackpot.mp3',
       title: 'Super Jackpot',
-      imageUrl: 'http://localhost:3001/jackpot.jpg'
+      imageUrl: 'http://localhost:3001/paisaje.jpg'
     }
   ];
   res.json(files);
 });
 
 app.post('/select-track', (req, res) => {
-  currentTrack = req.body.url ? req.body : null; // Asigna null si no hay URL (indica estado de "stop")
+  currentTrack = req.body.url ? req.body : null; 
   console.log('Track selected on server:', currentTrack);
   res.sendStatus(200);
 });

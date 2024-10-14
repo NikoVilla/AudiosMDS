@@ -17,7 +17,7 @@ const FullScreenPlayer = () => {
             console.log('Track and imageUrl set:', currentTrack);
           } else {
             console.log('No track found on server');
-            setTrack(null); // Resetear el estado del track a null si no se encuentra ningún track
+            setTrack(null); 
           }
         })
         .catch((error) => {
@@ -27,7 +27,6 @@ const FullScreenPlayer = () => {
 
     fetchCurrentTrack();
 
-    // Poll the server periodically to check for updates
     const intervalId = setInterval(fetchCurrentTrack, 1000);
 
     return () => clearInterval(intervalId);
@@ -35,7 +34,7 @@ const FullScreenPlayer = () => {
 
   useEffect(() => {
     const handleAudioEnded = () => {
-      setTrack(null); // Resetear el estado del track a null cuando el audio termina
+      setTrack(null);
     };
 
     const audioElement = document.getElementById('audio-player');
@@ -71,9 +70,10 @@ const FullScreenPlayer = () => {
         </>
       ) : (
         <img src={logo} alt="Default" style={{ 
-          width: '100%', 
-          height: '100%', 
+          width: '90%', 
+          height: '90%', 
           objectFit: 'cover' 
+          // centrar
         }} />
       )}
     </div>
