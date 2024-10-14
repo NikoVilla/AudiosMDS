@@ -41,7 +41,7 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
   return (
     <div className="audio-player" style={{ backgroundColor: '#18191f', color: 'white', padding: '20px', borderRadius: '10px' }}>
       <audio ref={audioRef} src={currentTrack.url} onEnded={handleStop} />
-      <div className="playlist" style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+      <div className="playlist" style={{ display: 'flex', gap: '30px', alignItems: 'center', fontSize: 25}}>
         {tracks.map((track, index) => (
           <div
             key={index}
