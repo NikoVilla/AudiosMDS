@@ -1,30 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Player from "@madzadev/audio-player";
-
-const colors = {
-  tagsBackground: "#FFC801",
-  tagsText: "#ffffff",
-  tagsBackgroundHoverActive: "#6e65f1",
-  tagsTextHoverActive: "#ffffff",
-  searchBackground: "#18191f",
-  searchText: "#ffffff",
-  searchPlaceHolder: "#575a77",
-  playerBackground: "#18191f",
-  titleColor: "#ffffff",
-  timeColor: "#ffffff",
-  progressSlider: "#FFC801",
-  progressUsed: "#ffffff",
-  progressLeft: "#151616",
-  bufferLoaded: "#1f212b",
-  volumeSlider: "#FFC801",
-  volumeUsed: "#ffffff",
-  volumeLeft: "#151616",
-  playlistBackground: "#18191f",
-  playlistText: "#575a77",
-  playlistBackgroundHoverActive: "#18191f",
-  playlistTextHoverActive: "#ffffff",
-};
+import AudioPlayer from './AudioPlayer';
 
 const TrackPlayer = () => {
   const [tracks, setTracks] = useState([]);
@@ -65,15 +41,9 @@ const TrackPlayer = () => {
   return (
     <div>
       {tracks.length > 0 ? (
-        <Player
-          trackList={tracks}
-          includeTags={false}
-          includeSearch={false}
-          showPlaylist={true}
-          sortTracks={true}
-          autoPlayNextTrack={false}
-          customColorScheme={colors}
-          onTrackClick={handleTrackSelect}  // Aquí se envía automáticamente el mensaje
+        <AudioPlayer
+          tracks={tracks}
+          onTrackSelect={handleTrackSelect}
         />
       ) : (
         <p>Loading...</p>
@@ -83,4 +53,3 @@ const TrackPlayer = () => {
 };
 
 export default TrackPlayer;
-

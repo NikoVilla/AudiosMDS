@@ -2,31 +2,31 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const FullScreenPlayer = () => {
-  const [message, setMessage] = useState('');
+  const [track, setTrack] = useState(null);
 
   useEffect(() => {
-    const fetchCurrentMessage = () => {
+    const fetchCurrentTrack = () => {
       axios.get('http://localhost:3001/current-track')
         .then((response) => {
-          const data = response.data;
-          console.log('Current message from server:', data);
+          const currentTrack = response.data;
+          console.log('Current track from server:', currentTrack);
 
-          if (data) {
-            setMessage(data.message || 'No message found');
-            console.log('Message set:', data.message);
+          if (currentTrack) {
+            setTrack(currentTrack);
+            console.log('Track and imageUrl set:', currentTrack);
           } else {
-            console.log('No data found on server');
+            console.log('No track found on server');
           }
         })
         .catch((error) => {
-          console.error('Error fetching current message', error);
+          console.error('Error fetching current track', error);
         });
     };
 
-    fetchCurrentMessage();
+    fetchCurrentTrack();
 
     // Poll the server periodically to check for updates
-    const intervalId = setInterval(fetchCurrentMessage, 3000);
+    const intervalId = setInterval(fetchCurrentTrack, 1000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -41,7 +41,18 @@ const FullScreenPlayer = () => {
       backgroundColor: 'black', 
       zIndex: 9999 
     }}>
-      <p style={{ color: 'white', textAlign: 'center', marginTop: '20%' }}>{message}</p>
+      {track ? (
+        <>
+          <img src={track.imageUrl} alt={track.title} style={{ 
+            width: '100%', 
+            height: '100%', 
+            objectFit: 'cover' 
+          }} />
+          <audio src={track.url} autoPlay />
+        </>
+      ) : (
+        <p style={{ color: 'white', textAlign: 'center', marginTop: '20%' }}>No track found</p>
+      )}
     </div>
   );
 };

@@ -13,11 +13,13 @@ let currentTrack = null;
 app.get('/files', (req, res) => {
   const files = [
     {
+      index: 0,
       url: 'http://localhost:3001/jackpot.mp3',
       title: 'Jackpot',
       imageUrl: 'http://localhost:3001/jackpot.jpg'
     },
     {
+      index: 1,
       url: 'http://localhost:3001/superjackpot.mp3',
       title: 'Super Jackpot',
       imageUrl: 'http://localhost:3001/jackpot.jpg'
