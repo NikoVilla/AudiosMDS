@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import TrackPlayer from './components/TrackPlayer';
 import FullScreenPlayer from './components/FullScreenPlayer';
 import logo from './logo-b-MDS-casino-oso.png';
