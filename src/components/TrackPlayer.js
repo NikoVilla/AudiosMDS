@@ -7,7 +7,7 @@ const TrackPlayer = () => {
   const [currentTrack, setCurrentTrack] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/files')
+    axios.get('http://192.168.43.72:3001/files')
       .then((response) => {
         const formattedTracks = response.data.map(file => ({
           url: file.url,
@@ -25,7 +25,7 @@ const TrackPlayer = () => {
 
   const handleTrackSelect = (track) => {
     setCurrentTrack(track);
-    axios.post('http://localhost:3001/select-track', track, {
+    axios.post('http://192.168.43.72:3001/select-track', track, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -40,7 +40,7 @@ const TrackPlayer = () => {
 
   const handleTrackStop = () => {
     setCurrentTrack(null);
-    axios.post('http://localhost:3001/select-track', {}, {
+    axios.post('http://192.168.43.72:3001/select-track', {}, {
       headers: {
         'Content-Type': 'application/json'
       }

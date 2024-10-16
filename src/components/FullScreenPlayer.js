@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import logo from './../logo-b-MDS-casino-oso.png'
+import logo from './../logo-b-MDS-casino-oso.png';
 
 const FullScreenPlayer = () => {
   const [track, setTrack] = useState(null);
 
   useEffect(() => {
     const fetchCurrentTrack = () => {
-      axios.get('http://localhost:3001/current-track')
+      axios.get('http://192.168.43.72:3001/current-track')
         .then((response) => {
           const currentTrack = response.data;
           console.log('Current track from server:', currentTrack);
@@ -73,7 +73,6 @@ const FullScreenPlayer = () => {
           width: '90%', 
           height: '90%', 
           objectFit: 'cover' 
-          // centrar
         }} />
       )}
     </div>
