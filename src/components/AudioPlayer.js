@@ -16,11 +16,6 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
     }
   }, [isPlaying, currentTrackIndex]);
 
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-    setIsStopped(false);
-  };
-
   const handleStop = () => {
     audioRef.current.pause();
     audioRef.current.currentTime = 0;
@@ -41,7 +36,7 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
   return (
     <div className="audio-player" style={{ backgroundColor: '#18191f', color: 'white', padding: '20px', borderRadius: '10px' }}>
       <audio ref={audioRef} src={currentTrack.url} onEnded={handleStop} />
-      <div className="playlist" style={{ display: 'flex', gap: '30px', alignItems: 'center', fontSize: 25 }}>
+      <div className="playlist" style={{ display: 'flex', gap: '30px', alignItems: 'center', fontSize: 23 }}>
         {tracks.map((track, index) => {
           const isActive = index === currentTrackIndex;
           return (
@@ -56,12 +51,11 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
                 justifyContent: 'center',
                 width: '100px',
                 height: '100px',
-                border: `2px solid ${isActive ? 'black' : 'white'}`,
+                border: `2px solid ${isActive ? '#FFA800' : 'white'}`,
                 borderRadius: '10px',
                 backgroundColor: isActive ? '#FFA800' : '#18191f',
                 color: isActive ? 'black' : 'white',
                 cursor: 'pointer',
-                position: 'relative'
               }}
             >
               {track.title}
