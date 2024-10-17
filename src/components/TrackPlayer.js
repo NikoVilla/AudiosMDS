@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AudioPlayer from './AudioPlayer';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 
 const TrackPlayer = () => {
   const [tracks, setTracks] = useState([]);
@@ -62,7 +64,9 @@ const TrackPlayer = () => {
           onTrackStop={handleTrackStop}
         />
       ) : (
-        <p>Loading...</p>
+        <Box display="flex" justifyContent="center" alignItems="center" height="20vh">
+          <CircularProgress />
+        </Box>
       )}
     </div>
   );

@@ -41,30 +41,33 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
   return (
     <div className="audio-player" style={{ backgroundColor: '#18191f', color: 'white', padding: '20px', borderRadius: '10px' }}>
       <audio ref={audioRef} src={currentTrack.url} onEnded={handleStop} />
-      <div className="playlist" style={{ display: 'flex', gap: '30px', alignItems: 'center', fontSize: 25}}>
-        {tracks.map((track, index) => (
-          <div
-            key={index}
-            onClick={() => handleTrackClick(index)}
-            className={`track ${index === currentTrackIndex ? 'active' : ''}`}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100px',
-              height: '100px',
-              border: '2px solid white',
-              borderRadius: '10px',
-              backgroundColor: index === currentTrackIndex ? '#2D40E6' : '#18191f',
-              color: 'white',
-              cursor: 'pointer',
-              position: 'relative'
-            }}
-          >
-            {track.title}
-          </div>
-        ))}
+      <div className="playlist" style={{ display: 'flex', gap: '30px', alignItems: 'center', fontSize: 25 }}>
+        {tracks.map((track, index) => {
+          const isActive = index === currentTrackIndex;
+          return (
+            <div
+              key={index}
+              onClick={() => handleTrackClick(index)}
+              className={`track ${isActive ? 'active' : ''}`}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100px',
+                height: '100px',
+                border: `2px solid ${isActive ? 'black' : 'white'}`,
+                borderRadius: '10px',
+                backgroundColor: isActive ? '#FFA800' : '#18191f',
+                color: isActive ? 'black' : 'white',
+                cursor: 'pointer',
+                position: 'relative'
+              }}
+            >
+              {track.title}
+            </div>
+          );
+        })}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <IconButton onClick={handleStop} style={{ color: 'white', fontSize: '2rem' }}>
@@ -75,6 +78,6 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
       </div>
     </div>
   );
-};
+};  
 
 export default AudioPlayer;

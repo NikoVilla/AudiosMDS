@@ -27,7 +27,7 @@ app.get('/files', (req, res) => {
       index: 1,
       url: 'http://192.168.43.72:3001/superjackpot.mp3',
       title: 'Super Jackpot',
-      imageUrl: 'http://192.168.43.72:3001/paisaje.jpg'
+      imageUrl: 'http://192.168.43.72:3001/superjackpot.jpg'
     }
   ];
   res.json(files);

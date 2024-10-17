@@ -69,10 +69,10 @@ const FullScreenPlayer = () => {
           <audio id="audio-player" src={track.url} autoPlay />
         </>
       ) : (
-        <img src={logo} alt="Default" style={{ 
-          width: '90%', 
-          height: '90%', 
-          objectFit: 'cover' 
+        <img src={logo} alt="Cargando..." style={{ 
+          width: '100%', 
+          height: '100%', 
+          objectFit: 'contain' 
         }} />
       )}
     </div>
