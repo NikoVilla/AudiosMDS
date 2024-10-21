@@ -3,7 +3,8 @@ import { Container, Box, TextField, Button } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LockIcon from '@mui/icons-material/Lock';
 import './../App.css';
-import logo from './../logo-b-MDS-casino-oso.png';
+import logo from './../assets/logo-b-MDS-casino-oso.png';
+import './../index.css';
 
 const Login = () => {
   return (
@@ -14,15 +15,13 @@ const Login = () => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            // width: '100%',
             padding: 2,
             boxShadow: 3,
             borderRadius: 7,
             backgroundColor: '#000000',
-            height: '70vh', 
+            height: '70vh',
             width: '55vh',
-            justifyContent: 'space-between',
-            paddingTop: 4,
+            justifyContent: 'flex-start',
             paddingBottom: 4,
           }}
         >
@@ -30,7 +29,7 @@ const Login = () => {
             width: '70%', 
             height: 'auto', 
           }}/>
-          <Box component="form" noValidate sx={{ width: '80%', mt: 2 }}>
+          <Box component="form" noValidate sx={{ width: '80%', mt: 5 }}> 
             <TextField
               variant="outlined"
               margin="normal"
@@ -40,19 +39,23 @@ const Login = () => {
               label="Nombre de usuario"
               name="username"
               autoComplete="username"
-              autoFocus
               InputProps={{
                 startAdornment: (
-                  <AccountCircleIcon position="start" style={{ color: '#FFA800' }} />
+                  <AccountCircleIcon position="start" style={{ color: '#FFA800', marginRight: '12px' }} />
                 ),
-                style: { backgroundColor: '#262626', color: 'white', borderRadius: 5 }
+                style: { backgroundColor: '#262626', color: 'white', borderRadius: 15, paddingLeft: '12px' }
+              }}
+              InputLabelProps={{
+                shrink: true,
+                required: false,
+                style: { color: 'white', fontFamily: 'Nunito, sans-serif', fontWeight: 600, fontSize: 18 }
               }}
               sx={{
                 mb: 2,
                 '& .MuiOutlinedInput-root': {
-                  '&:hover fieldset': {
-                    borderColor: '#FFA800',
-                  },
+                  // '&:hover fieldset': {
+                  //   borderColor: '#FFA800',
+                  // },
                   '&.Mui-focused fieldset': {
                     borderColor: '#FFA800',
                   },
@@ -60,9 +63,9 @@ const Login = () => {
                 '& .MuiInputLabel-root': {
                   color: 'white',
                 },
-                '& .MuiInputLabel-root.Mui-focused': {
-                  color: '#FFA800',
-                },
+                // '& .MuiInputLabel-root.Mui-focused': {
+                //   color: '#FFA800',
+                // },
               }}
             />
             <TextField
@@ -77,16 +80,21 @@ const Login = () => {
               autoComplete="current-password"
               InputProps={{
                 startAdornment: (
-                  <LockIcon position="start" style={{ color: '#FFA800' }} />
+                  <LockIcon position="start" style={{ color: '#FFA800', marginRight: '12px' }} />
                 ),
-                style: { backgroundColor: '#262626', color: 'white', borderRadius: 5 }
+                style: { backgroundColor: '#262626', color: 'white', borderRadius: 15, paddingLeft: '12px' }
+              }}
+              InputLabelProps={{
+                shrink: true,
+                required: false,
+                style: { color: 'white', fontFamily: 'Nunito, sans-serif', fontWeight: 600, fontSize: 18}
               }}
               sx={{
-                mb: 2,
+                mb: 3, 
                 '& .MuiOutlinedInput-root': {
-                  '&:hover fieldset': {
-                    borderColor: '#FFA800',
-                  },
+                  // '&:hover fieldset': {
+                  //   borderColor: '#FFA800',
+                  // },
                   '&.Mui-focused fieldset': {
                     borderColor: '#FFA800',
                   },
@@ -94,16 +102,16 @@ const Login = () => {
                 '& .MuiInputLabel-root': {
                   color: 'white',
                 },
-                '& .MuiInputLabel-root.Mui-focused': {
-                  color: '#FFA800',
-                },
+                // '& .MuiInputLabel-root.Mui-focused': {
+                //   color: '#FFA800',
+                // },
               }}
             />
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, backgroundColor: '#FFA800', color: 'black', padding: '10px 0', height: '56px' }}
+              sx={{ mt: 8, mb: 2, backgroundColor: '#FFA800', color: 'black', height: '52px', fontFamily: 'Nunito, sans-serif', fontWeight: 800, fontSize: 14, borderRadius: 5 }}
             >
               Iniciar Sesión
             </Button>

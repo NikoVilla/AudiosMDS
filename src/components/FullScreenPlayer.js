@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import logo from './../logo-b-MDS-casino-oso.png';
+import logo from './../assets/logo-b-MDS-casino-oso.png';
 
 const FullScreenPlayer = () => {
   const [track, setTrack] = useState(null);
