@@ -3,12 +3,21 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 29vmin;
   pointer-events: none;
 }
 
+.App-background {
+  background-color: #262626;
+  color: white;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .App-header {
-  background-color: #282c34;
+  background-color: #262626;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
