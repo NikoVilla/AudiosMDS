@@ -3,7 +3,7 @@ import axios from 'axios';
 import AudioPlayer from './AudioPlayer';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import logo from './../assets/logo-b-MDS-casino-oso.png';
+import logo from './../../assets/logo-b-MDS-casino-oso.png';
 
 const TrackPlayer = () => {
   const [tracks, setTracks] = useState([]);

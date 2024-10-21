@@ -2,9 +2,9 @@ import React from 'react';
 import { Container, Box, TextField, Button } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LockIcon from '@mui/icons-material/Lock';
-import './../App.css';
-import logo from './../assets/logo-b-MDS-casino-oso.png';
-import './../index.css';
+import './../../App.css';
+import logo from './../../assets/logo-b-MDS-casino-oso.png';
+import './../../index.css';
 
 const Login = () => {
   return (

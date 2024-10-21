@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import logo from './../assets/logo-b-MDS-casino-oso.png';
+import logo from './../../assets/logo-b-MDS-casino-oso.png';
 
-const FullScreenPlayer = () => {
+const FullScreen = () => {
   const [track, setTrack] = useState(null);
 
   useEffect(() => {
@@ -79,4 +79,4 @@ const FullScreenPlayer = () => {
   );
 };
 
-export default FullScreenPlayer;
+export default FullScreen;
