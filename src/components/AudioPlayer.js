@@ -3,24 +3,29 @@ import { IconButton } from '@mui/material';
 import StopIcon from '@mui/icons-material/Stop';
 
 const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isStopped, setIsStopped] = useState(false);
   const audioRef = useRef(null);
 
+  const currentTrack = currentTrackIndex !== null ? tracks[currentTrackIndex] : null;
+
   useEffect(() => {
-    if (isPlaying) {
-      audioRef.current.play();
-    } else {
-      audioRef.current.pause();
+    if (audioRef.current) {
+      if (isPlaying && currentTrack) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
     }
-  }, [isPlaying, currentTrackIndex]);
+  }, [isPlaying, currentTrack]);
 
   const handleStop = () => {
-    audioRef.current.pause();
-    audioRef.current.currentTime = 0;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
     setIsPlaying(false);
-    setIsStopped(true);
+    setCurrentTrackIndex(null); // Deseleccionar el track
     onTrackStop();
   };
 
@@ -28,14 +33,13 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
     setCurrentTrackIndex(index);
     onTrackSelect(tracks[index]);
     setIsPlaying(true);
-    setIsStopped(false);
   };
-
-  const currentTrack = tracks[currentTrackIndex];
 
   return (
     <div className="audio-player" style={{ backgroundColor: '#18191f', color: 'white', padding: '20px', borderRadius: '10px' }}>
-      <audio ref={audioRef} src={currentTrack.url} onEnded={handleStop} />
+      {currentTrack && (
+        <audio ref={audioRef} src={currentTrack.url} onEnded={handleStop} />
+      )}
       <div className="playlist" style={{ display: 'flex', gap: '30px', alignItems: 'center', fontSize: 23 }}>
         {tracks.map((track, index) => {
           const isActive = index === currentTrackIndex;
@@ -72,6 +76,6 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
       </div>
     </div>
   );
-};  
+};
 
 export default AudioPlayer;
