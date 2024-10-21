@@ -21,13 +21,13 @@ app.get('/files', (req, res) => {
       index: 0,
       url: 'http://192.168.43.72:3001/jackpot.mp3',
       title: 'Jackpot',
-      imageUrl: 'http://192.168.43.72:3001/jackpot.jpg'
+      imageUrl: 'http://192.168.43.72:3001/premio.png'
     },
     {
       index: 1,
       url: 'http://192.168.43.72:3001/superjackpot.mp3',
       title: 'Super Jackpot',
-      imageUrl: 'http://192.168.43.72:3001/superjackpot.jpg'
+      imageUrl: 'http://192.168.43.72:3001/premio.png'
     }
   ];
   res.json(files);

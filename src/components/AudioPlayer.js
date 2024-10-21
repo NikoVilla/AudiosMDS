@@ -25,7 +25,7 @@ const AudioPlayer = ({ tracks, onTrackSelect, onTrackStop }) => {
       audioRef.current.currentTime = 0;
     }
     setIsPlaying(false);
-    setCurrentTrackIndex(null); // Deseleccionar el track
+    setCurrentTrackIndex(null); 
     onTrackStop();
   };
 
