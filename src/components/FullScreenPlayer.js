@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import logo from './../logo-b-MDS-casino-oso.png';
+import './../index.css'
 
 const FullScreenPlayer = () => {
   const [track, setTrack] = useState(null);
+
+  const formatAmount = (amount) => {
+    const numericValue = Number(amount);
+    
+    return `$ ${numericValue.toLocaleString('es-CL')}`;
+  };
+  
 
   useEffect(() => {
     const fetchCurrentTrack = () => {
@@ -24,8 +32,6 @@ const FullScreenPlayer = () => {
           console.error('Error fetching current track', error);
         });
     };
-
-    fetchCurrentTrack();
 
     const intervalId = setInterval(fetchCurrentTrack, 1000);
 
@@ -67,6 +73,21 @@ const FullScreenPlayer = () => {
             objectFit: 'cover' 
           }} />
           <audio id="audio-player" src={track.url} autoPlay />
+          {track.amount && (
+            <div style={{ 
+              position: 'absolute', 
+              bottom: '5%', 
+              left: '50%', 
+              transform: 'translateX(-50%)', 
+              color: 'red', 
+              fontFamily: 'Lobster', 
+              fontSize: 150,
+              textShadow: '4px 4px 8px rgba(0, 0, 0, 0.7)'
+            }}>
+              {formatAmount(track.amount)}
+            </div>
+          )}
+
         </>
       ) : (
         <img src={logo} alt="Cargando..." style={{ 
