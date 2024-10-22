@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Fade } from '@mui/material';
 import './../index.css';
 
 const FullScreenPlayer = () => {
   const [track, setTrack] = useState(null);
   const [images, setImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [fade, setFade] = useState(true);
 
   const formatAmount = (amount) => {
     const numericValue = Number(amount);
@@ -71,7 +73,12 @@ const FullScreenPlayer = () => {
   useEffect(() => {
     if (!track && images.length > 0) {
       const intervalId = setInterval(() => {
-        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+        setFade(false);
+        setTimeout(() => {
+          setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+          setFade(true);
+        }, 1000); 
+
       }, 7000);
 
       return () => clearInterval(intervalId);
@@ -113,12 +120,13 @@ const FullScreenPlayer = () => {
         </>
       ) : (
         images.length > 0 ? (
-          <img src={images[currentImageIndex].url} alt="Publicidad" style={{ 
-            width: '100%', 
-            height: '100%', 
-            objectFit: 'cover', 
-            transition: 'opacity 1s ease-in-out' 
-          }} />
+          <Fade in={fade} timeout={1000}>
+            <img src={images[currentImageIndex].url} alt="Publicidad" style={{ 
+              width: '100%', 
+              height: '100%', 
+              objectFit: 'cover' 
+            }} />
+          </Fade>
         ) : (
           <div style={{ 
             width: '100%', 
