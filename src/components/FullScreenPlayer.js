@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import logo from './../logo-b-MDS-casino-oso.png';
-import './../index.css'
+import './../index.css';
 
 const FullScreenPlayer = () => {
   const [track, setTrack] = useState(null);
+  const [images, setImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const formatAmount = (amount) => {
     const numericValue = Number(amount);
-    
     return `$ ${numericValue.toLocaleString('es-CL')}`;
   };
-  
 
   useEffect(() => {
     const fetchCurrentTrack = () => {
@@ -55,6 +54,30 @@ const FullScreenPlayer = () => {
     };
   }, [track]);
 
+  useEffect(() => {
+    const fetchImages = () => {
+      axios.get('http://192.168.43.72:3001/images-list')
+        .then((response) => {
+          setImages(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching images', error);
+        });
+    };
+
+    fetchImages();
+  }, []);
+
+  useEffect(() => {
+    if (!track && images.length > 0) {
+      const intervalId = setInterval(() => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+      }, 7000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [track, images]);
+
   return (
     <div style={{ 
       position: 'fixed', 
@@ -87,14 +110,26 @@ const FullScreenPlayer = () => {
               {formatAmount(track.amount)}
             </div>
           )}
-
         </>
       ) : (
-        <img src={logo} alt="Cargando..." style={{ 
-          width: '90%', 
-          height: '90%', 
-          objectFit: 'contain' 
-        }} />
+        images.length > 0 ? (
+          <img src={images[currentImageIndex].url} alt="Publicidad" style={{ 
+            width: '100%', 
+            height: '100%', 
+            objectFit: 'cover', 
+            transition: 'opacity 1s ease-in-out' 
+          }} />
+        ) : (
+          <div style={{ 
+            width: '100%', 
+            height: '100%', 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center' 
+          }}>
+            <p style={{ color: 'white' }}>Cargando imágenes...</p>
+          </div>
+        )
       )}
     </div>
   );
