@@ -12,8 +12,6 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador para visuali
 La página se recargará automáticamente cada vez que realices cambios.\
 También se mostrarán errores de lint en la consola.
 
-## Ejecutar pruebas
-
 ## Crear un build para producción
 
 ### `npm run build`
@@ -30,10 +28,10 @@ La aplicación estará lista para ser desplegada.
 
 Dentro de la carpeta `app`, puedes iniciar el servidor backend utilizando uno de los siguientes comandos:
 
-Node.js: Ejecuta node server.js para iniciar el servidor.
+Node.js: Ejecuta node server.js para iniciar el servidor.\
 PM2: Ejecuta pm2 start server.js para iniciar el servidor con PM2. 
 
 ### Iniciar el servidor frontend
-En la carpeta `build` creada anteriormente, puedes iniciar el servidor forntend utilizando el siguientes comandos:
+En la carpeta `build` creada anteriormente, puedes iniciar el servidor forntend utilizando el siguientes comandos:.\
 serve -s . -l 3000.
 
