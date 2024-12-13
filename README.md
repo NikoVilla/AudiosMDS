@@ -32,6 +32,6 @@ Node.js: Ejecuta node server.js para iniciar el servidor.\
 PM2: Ejecuta pm2 start server.js para iniciar el servidor con PM2. 
 
 ### Iniciar el servidor frontend
-En la carpeta `build` creada anteriormente, puedes iniciar el servidor forntend utilizando el siguientes comandos:.\
+En la carpeta `build` creada anteriormente, puedes iniciar el servidor forntend utilizando el siguientes comando:.\
 serve -s . -l 3000.
 
