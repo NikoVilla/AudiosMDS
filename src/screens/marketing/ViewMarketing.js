@@ -24,6 +24,7 @@ const ViewMarketing = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [open, setOpen] = useState(false);
   const [fijo, setFijo] = useState(300);
+  const [alertSeverity, setAlertSeverity] = useState('success');
 
   useEffect(() => {
     const fetchMedia = async () => {
@@ -62,11 +63,13 @@ const ViewMarketing = () => {
   
       try {
         await setImageTime(imageName, fijo);
-        setAlertMessage(`Tiempo para ${imageName} fijado a ${fijo} segundos correctamente.`);
+        setAlertMessage(`La imagen se ha actualizado correctamente.`);
+        setAlertSeverity("success");
         setAlertOpen(true);
       } catch (error) {
         console.error('Error al enviar el tiempo:', error);
         setAlertMessage('Error al fijar imagen. Inténtelo nuevamente.');
+        setAlertSeverity("error");
         setAlertOpen(true);
       }
     }
@@ -75,6 +78,7 @@ const ViewMarketing = () => {
   const handleDeleteAll = async () => {
     if (images.length === 0) {
       setAlertMessage("Sin elementos a eliminar");
+      setAlertSeverity("error");
       setAlertOpen(true);
       return;
     }
@@ -107,6 +111,10 @@ const ViewMarketing = () => {
     }
   };
 
+  const handleCloseAlert = () => {
+    setAlertOpen(false);
+  };
+  
   const handlePreviousImage = () => {
     if (currentImageIndex > 0) {
       setCurrentImageIndex(currentImageIndex - 1);
@@ -292,7 +300,7 @@ const ViewMarketing = () => {
                     },
                   }}
                 >
-                  <MenuItem value="-2">Dejar de fijar</MenuItem>
+                  <MenuItem value="0">Dejar de fijar</MenuItem>
                   <MenuItem value={300}>Fijar por 5 minuto</MenuItem>
                   <MenuItem value={600}>Fijar por 10 minutos</MenuItem>
                   <MenuItem value={900}>Fijar por 15 minutos</MenuItem>
@@ -402,8 +410,16 @@ const ViewMarketing = () => {
           )}
         </Box>
       </Modal>
-      <Snackbar open={alertOpen} autoHideDuration={2000} onClose={() => setAlertOpen(false)}>
-        <Alert onClose={() => setAlertOpen(false)} severity="error">
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+      >
+        <Alert
+          onClose={handleCloseAlert}
+          severity={alertSeverity}
+          sx={{ width: '100%' }}
+        >
           {alertMessage}
         </Alert>
       </Snackbar>

@@ -115,7 +115,7 @@ function eliminarArchivosExpira2() {
 
       // Si shownow es -1, ignorar el archivo (no tiene fecha de caducidad).
       if (row.shownow === -1) {
-        console.log(`Elemento con id ${row.id} no tiene caducidad. Ignorado.`);
+        // console.log(`Elemento con id ${row.id} no tiene caducidad. Ignorado.`);
         return;
       }
 
@@ -175,6 +175,52 @@ app.delete('/marketing/:filename', auth.verifyToken, (req, res) => {
   });
 });
 
+// ######################################## Imagen Fija ####################################################
+
+app.get('/get-status', (req, res) => {
+  db2.all("SELECT ruta, fijo FROM publicidad", [], (err, rows) => {
+    if (err) {
+      console.error("Error al consultar la base de datos:", err.message);
+      return res.status(500).json({ message: 'Error al consultar la base de datos.' });
+    }
+
+    const statuses = rows.map(row => ({
+      image: row.ruta,
+      status: row.fijo > 0 ? 'activo' : 'inactivo',
+    }));
+
+    res.status(200).json(statuses);
+  });
+});
+
+app.post('/set-time', (req, res) => {
+  const { imageName, fijo } = req.body;
+
+  if (!imageName || fijo === undefined) {
+    return res.status(400).json({ message: 'Datos incompletos: se requieren imageName y fijo.' });
+  }
+
+  // Buscar la imagen en la base de datos y actualizar la columna `fijo`
+  db2.run(
+    "UPDATE publicidad SET fijo = ? WHERE ruta LIKE ?",
+    [fijo, `%${imageName}%`],
+    function (err) {
+      if (err) {
+        console.error("Error al actualizar la base de datos:", err.message);
+        return res.status(500).json({ message: 'Error al actualizar la base de datos.' });
+      }
+
+      if (this.changes === 0) {
+        // Si no se actualizó ninguna fila
+        return res.status(404).json({ message: 'Imagen no encontrada en la base de datos.' });
+      }
+
+      // Éxito
+      res.status(200).json({ message: 'Valor de fijo actualizado correctamente.' });
+    }
+  );
+});
+
 
 
 
@@ -231,7 +277,7 @@ app.get('/images-list', (req, res) => {
   });
 });
 
-// ################################ Tabla usaurios ################################################
+// ################################ Tabla usuarios ################################################
 
 app.post('/usuarios', (req, res) => {
   const { first_name, last_name, username, role, password } = req.body;
