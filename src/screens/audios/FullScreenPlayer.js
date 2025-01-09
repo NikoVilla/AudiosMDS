@@ -10,6 +10,7 @@ const FullScreenPlayer = () => {
   const [images, setImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [fade, setFade] = useState(true);
+  const [fija, setFija] = useState(null);
 
   const formatAmount = (amount) => {
     const numericValue = Number(amount);
@@ -87,6 +88,30 @@ const FullScreenPlayer = () => {
   }, []);
 
   useEffect(() => {
+    const fetchFija = () => {
+      const token = localStorage.getItem('token');
+      axios.get(`${backendUrl}/get-status`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then((response) => {
+        const activeFija = response.data.find(item => item.status === 'activo');
+        setFija(activeFija || null);
+        console.log('Fija fetched from server:', activeFija);
+      })
+      .catch((error) => {
+        console.error('Error fetching fija', error);
+      });
+    };
+
+    fetchFija();
+    const intervalId = setInterval(fetchFija, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
     if (!track && images.length > 0) {
       const intervalId = setInterval(() => {
         setFade(false);
@@ -144,6 +169,12 @@ const FullScreenPlayer = () => {
             </div>
           )}
         </>
+      ) : fija ? (
+        <img src={fija.image} alt="Fija" style={{ 
+          width: '100%', 
+          height: '100%', 
+          objectFit: 'cover' 
+        }} />
       ) : (
         images.length > 0 ? (
           <Fade in={fade} timeout={1000}>

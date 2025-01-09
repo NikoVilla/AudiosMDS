@@ -239,7 +239,7 @@ export default function Content() {
         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
           <ThemeProvider theme={theme}>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-              <Grid container spacing={1}>
+              <Grid container spacing={0}>
                 <Grid item xs={12}>
                   <FormControlLabel
                     control={
@@ -250,7 +250,7 @@ export default function Content() {
                 </Grid>
   
                 {!shownow && (
-                  <Grid item xs={12}>
+                  <Grid item xs={12} sx={{mb:1}}>
                     <FormControlLabel
                       control={<Checkbox checked={is24Hours} onChange={handle24HoursChange} />}
                       label="Usar 24 horas"
@@ -358,7 +358,7 @@ export default function Content() {
             onClick={handleUpload}
             disabled={isUploading}
             sx={{
-              mt: 3,
+              mt: 2,
               width: '100%',
               textTransform: 'none',
               backgroundColor: isUploading ? 'grey' : '#28a745',

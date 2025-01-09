@@ -152,7 +152,7 @@ app.get('/marketing', auth.verifyToken, (req, res) => {
       console.error('Error al leer los archivos:', err); // Log adicional
       return res.status(500).json({ message: 'Error al leer los archivos.' });
     }
-    console.log('Archivos encontrados:', files); // Log adicional
+    console.log('Archivos encontrados:', files); 
     const publicidadFiles = files.map(file => ({
       filename: file,
       path: `/marketing/${file}`
@@ -164,11 +164,11 @@ app.get('/marketing', auth.verifyToken, (req, res) => {
 app.delete('/marketing/:filename', auth.verifyToken, (req, res) => {
   const { filename } = req.params;
   const filePath = path.join(__dirname, 'publicidad_uploads', filename);
-  console.log('Eliminando archivo:', filePath); // Log adicional
+  console.log('Eliminando archivo:', filePath);
 
   fs.unlink(filePath, (err) => {
     if (err) {
-      console.error('Error al eliminar el archivo:', err); // Log adicional
+      console.error('Error al eliminar el archivo:', err);
       return res.status(500).json({ message: 'Error al eliminar el archivo.' });
     }
     res.status(200).json({ message: 'Archivo eliminado correctamente.' });
@@ -184,8 +184,10 @@ app.get('/get-status', (req, res) => {
       return res.status(500).json({ message: 'Error al consultar la base de datos.' });
     }
 
+    // ########################################### Cambiar ruta al hacer build ###############################
+    const baseUrl = 'http://localhost:3001/images';
     const statuses = rows.map(row => ({
-      image: row.ruta,
+      image: `${baseUrl}/${row.ruta.split('\\').pop()}`,
       status: row.fijo > 0 ? 'activo' : 'inactivo',
     }));
 
