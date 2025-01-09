@@ -4,7 +4,6 @@ const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 export const uploadMarketing = async (formData) => {
   try {
-    // Obtén el token almacenado localmente
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -15,24 +14,21 @@ export const uploadMarketing = async (formData) => {
       throw new Error('URL del backend no definida en las variables de entorno.');
     }
 
-    // Realiza la solicitud POST al backend
     const response = await axios.post(`${backendUrl}/upload-publicidad`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data', // Indica que el cuerpo es FormData
-        Authorization: `Bearer ${token}`, // Token de autorización
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
       },
     });
 
-    // Devuelve la respuesta del servidor
     return response.data;
   } catch (error) {
     console.error('Error al subir medios:', error);
 
-    // Manejo de errores para obtener mensajes útiles
     const errorMessage = 
-      error.response?.data?.message || // Mensaje proporcionado por el backend
-      error.message ||                 // Mensaje del propio error
-      'Error desconocido al subir los medios'; // Fallback
+      error.response?.data?.message ||
+      error.message ||               
+      'Error desconocido al subir los medios';
 
     throw new Error(errorMessage);
   }
@@ -60,6 +56,22 @@ export const getMarketing = async () => {
     console.error('Error fetching publicidad:', error);
     throw error;
   }
+};
+
+// ################################ Fijo/Mostrar ahora #####################################
+
+export const setImageTime = async (imageName, fijo) => {
+  const response = await fetch(`${backendUrl}/set-time`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ imageName, fijo }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to set image time');
+  }
+  return await response.json();
 };
 
 export const deleteMarketing = async (filename) => {

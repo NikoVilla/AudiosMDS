@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Modal, Typography, CircularProgress, Grid, IconButton, Snackbar } from '@mui/material';
+import { Box, Button, Modal, Typography, CircularProgress, Grid, IconButton, Snackbar, Select, MenuItem } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import { Delete, Close } from '@mui/icons-material';
-import { getMarketing, deleteMarketing } from './ServiceMarketing';
+import { getMarketing, deleteMarketing, setImageTime } from './ServiceMarketing';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ConfirmDeleteModal from './../../shared/modal/deleteModal'
@@ -23,6 +23,7 @@ const ViewMarketing = () => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [open, setOpen] = useState(false);
+  const [fijo, setFijo] = useState(300);
 
   useEffect(() => {
     const fetchMedia = async () => {
@@ -54,6 +55,22 @@ const ViewMarketing = () => {
     await handleDeleteAll();
     setOpen(false);
   };
+
+  const handleSetImageTime = async () => {
+    if (currentImageIndex !== null && images[currentImageIndex]) {
+      const imageName = images[currentImageIndex].name;
+  
+      try {
+        await setImageTime(imageName, fijo);
+        setAlertMessage(`Tiempo para ${imageName} fijado a ${fijo} segundos correctamente.`);
+        setAlertOpen(true);
+      } catch (error) {
+        console.error('Error al enviar el tiempo:', error);
+        setAlertMessage('Error al fijar imagen. Inténtelo nuevamente.');
+        setAlertOpen(true);
+      }
+    }
+  };  
 
   const handleDeleteAll = async () => {
     if (images.length === 0) {
@@ -227,15 +244,79 @@ const ViewMarketing = () => {
           sx={{
             position: 'relative',
             width: '80%',
-            backgroundColor: '#000',
+            height: '72%',
+            backgroundColor: '#444444',
             borderRadius: 2,
             p: 3,
             textAlign: 'center',
             outline: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
           }}
         >
           {currentImageIndex !== null && images[currentImageIndex] ? (
             <>
+              <Box      
+                sx={{
+                  position: 'absolute',
+                  top: 10,
+                  justifyContent: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2, // Espacio entre el menú y el botón
+                }}
+              >
+                <Select
+                  value={fijo}
+                  onChange={(e) => setFijo(e.target.value)}
+                  sx={{
+                    height: '40px',
+                    width: 'auto',
+                    borderRadius: 1,
+                    color: '#FFA800',
+                    borderColor: '#FFA800',
+                    backgroundColor: '#262626',
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#FFA800',
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#FFA800',
+                    },
+                    '& .MuiSvgIcon-root': {
+                      color: '#FFA800',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#FFA800',
+                    },
+                  }}
+                >
+                  <MenuItem value="-2">Dejar de fijar</MenuItem>
+                  <MenuItem value={300}>Fijar por 5 minuto</MenuItem>
+                  <MenuItem value={600}>Fijar por 10 minutos</MenuItem>
+                  <MenuItem value={900}>Fijar por 15 minutos</MenuItem>
+                  <MenuItem value={1200}>Fijar por 20 minutos</MenuItem>
+                </Select>
+                <Button
+                  variant="contained"
+                  sx={{
+                    textTransform: "none",
+                    fontFamily: 'Nunito, sans-serif',
+                    fontWeight: 500,
+                    backgroundColor: fijo ? "#FFA800" : "grey",
+                    color: fijo ? "#000" : "#666",
+                    "&:hover": {
+                      backgroundColor: fijo ? "#cc8500" : "#000",
+                    },
+                  }}
+                  onClick={handleSetImageTime}
+                  disabled={!fijo}
+                >
+                  Enviar
+                </Button>
+              </Box>
+
               {/* Botón de cerrar */}
               <IconButton
                 sx={{ position: 'absolute', top: 10, right: 10, color: 'white' }}
@@ -307,7 +388,10 @@ const ViewMarketing = () => {
                 variant="contained"
                 color="error"
                 startIcon={<Delete />}
-                sx={{ mt: 2 }}
+                sx={{ 
+                  mt: 1,
+                  width: "fit-content",
+                 }}
                 onClick={handleDeleteImage}
               >
                 Eliminar

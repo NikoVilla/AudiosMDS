@@ -20,172 +20,6 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const db = new sqlite3.Database('gestor_archivos.db');
-
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS archivos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    ruta TEXT,
-    fecha_inicio DATETIME,
-    fecha_fin DATETIME,
-    duracion INTEGER,
-    texto TEXT
-  )`);
-});
-
-const media = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, 'media_uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir);
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
-
-const upload = multer({ storage: media });
-
-app.use('/media', express.static(path.join(__dirname, 'media_uploads')));
-
-app.post('/upload-media', auth.verifyToken, upload.array('files'), (req, res) => {
-  const { showNow, is24Hours, startDate, startTime, endDate, endTime, text } = req.body;
-  const files = req.files;
-
-  let fechaInicio = null;
-  let fechaFin = null;
-  let duracion = null;
-
-  if (showNow) {
-    duracion = parseInt(showNow);
-    fechaInicio = new Date();
-    fechaFin = new Date(fechaInicio.getTime() + duracion * 1000);
-  } else if (is24Hours) {
-    duracion = parseInt(is24Hours);
-    fechaInicio = new Date();
-    fechaFin = new Date(fechaInicio.getTime() + duracion * 1000);
-  } else if (startDate && startTime && endDate && endTime) {
-    fechaInicio = new Date(`${startDate}T${startTime}`);
-    fechaFin = new Date(`${endDate}T${endTime}`);
-  }
-
-  if (files && files.length > 0) {
-    files.forEach(file => {
-      const ruta = file.path;
-
-      db.run("INSERT INTO archivos (ruta, fecha_inicio, fecha_fin, duracion, texto) VALUES (?, ?, ?, ?, ?)", 
-        [ruta, fechaInicio, fechaFin, duracion, text || null], (err) => {
-          if (err) {
-            console.error(err.message);
-          }
-        });
-    });
-    res.status(200).json({ message: 'Archivos subidos y datos guardados correctamente' });
-  } else {
-    res.status(400).json({ message: 'No se han subido archivos.' });
-  }
-});
-
-// function eliminarArchivosExpirados() {
-//   const now = new Date();
-//   const margen = 30 * 1000;
-
-//   db.all("SELECT id, ruta, fecha_fin FROM archivos", [], (err, rows) => {
-//     if (err) {
-//       console.error(err.message);
-//       return;
-//     }
-
-//     rows.forEach((row) => {
-//       const fechaFin = new Date(row.fecha_fin);
-
-//       // Verificar si el archivo ha expirado hace más de un minuto
-//       if (fechaFin <= new Date(now.getTime() - margen)) {
-
-//         if (fs.existsSync(row.ruta)) {
-//           fs.unlinkSync(row.ruta);
-//           console.log(`Archivo eliminado: ${row.ruta}`);
-//         }
-
-//         // Eliminar de la base de datos
-//         db.run("DELETE FROM archivos WHERE id = ?", [row.id], (err) => {
-//           if (err) {
-//             console.error(err.message);
-//           }
-//         });
-//       }
-//     });
-//   });
-// }
-
-// cron.schedule('* * * * *', () => {
-//   eliminarArchivosExpirados();
-// });
-
-app.get('/media', auth.verifyToken, (req, res) => {
-  const uploadDir = path.join(__dirname, 'media_uploads');
-  fs.readdir(uploadDir, (err, files) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error al leer los archivos.' });
-    }
-    const mediaFiles = files.map(file => ({
-      filename: file,
-      path: `/media/${file}`
-    }));
-    res.status(200).json(mediaFiles);
-  });
-});
-
-app.get('/media-full', (req, res) => {
-  const imagesDir = './media_uploads';
-
-  // Leer archivos del directorio
-  fs.readdir(imagesDir, (err, files) => {
-    if (err) {
-      console.error('Error al leer el directorio:', err);
-      return res.status(500).json({ error: 'No se pudo leer el directorio' });
-    }
-
-    // Consultar la base de datos
-    db.all("SELECT ruta, duracion FROM archivos", [], (err, rows) => {
-      if (err) {
-        console.error('Error al consultar la base de datos:', err.message);
-        return res.status(500).json({ message: 'Error al consultar la base de datos' });
-      }
-
-      // Crear un mapa con la información de la base de datos para fácil acceso
-      const dbData = rows.reduce((acc, row) => {
-        const fileName = path.basename(row.ruta); // Extraer solo el nombre del archivo
-        acc[fileName] = { duracion: row.duracion || 0 }; // Agregar duración
-        return acc;
-      }, {});
-
-      // Combinar información del directorio y la base de datos
-      const mediaData = files.map(file => ({
-        name: file,
-        url: `${process.env.BASE_URL}/media/${file}`,
-        duracion: dbData[file]?.duracion || 0, // Si no está en la BD, asignar duración 0
-      }));
-
-      res.status(200).json(mediaData);
-    });
-  });
-});
-
-app.delete('/media/:filename', auth.verifyToken, (req, res) => {
-  const { filename } = req.params;
-  const filePath = path.join(__dirname, 'media_uploads', filename);
-
-  fs.unlink(filePath, (err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error al eliminar el archivo.' });
-    }
-    res.status(200).json({ message: 'Archivo eliminado correctamente.' });
-  });
-});
-
 const db2 = new sqlite3.Database('publicidad.db');
 
 db2.serialize(() => {
@@ -195,7 +29,8 @@ db2.serialize(() => {
     fecha_inicio DATETIME,
     fecha_fin DATETIME,
     duracion INTEGER,
-    texto TEXT
+    shownow INTEGER,
+    fijo INTEGER
   )`);
 });
 
@@ -217,36 +52,48 @@ const publicidadUpload = multer({ storage: publicidad });
 app.use('/marketing', express.static(path.join(__dirname, 'publicidad_uploads')));
 
 app.post('/upload-publicidad', auth.verifyToken, publicidadUpload.array('files'), (req, res) => {
-  const { showNow, is24Hours, startDate, startTime, endDate, endTime, text } = req.body;
+  const { shownow, is24Hours, startDate, startTime, endDate, endTime } = req.body;
   const files = req.files;
 
   let fechaInicio = null;
   let fechaFin = null;
   let duracion = null;
+  // let shownowValue = shownow ? parseInt(shownow) : null; // Si `shownow` es vacío, se asigna NULL.
+  let shownowValue = shownow && parseInt(shownow) !== 0 ? parseInt(shownow) : null; // Si `shownow` es 0 o vacío, se asigna NULL.
 
-  if (showNow) {
-    duracion = parseInt(showNow);
+
+  if (shownowValue) {
+    // Si se proporciona `shownow`, calcular las fechas de inicio y fin
+    duracion = shownowValue;
     fechaInicio = new Date();
     fechaFin = new Date(fechaInicio.getTime() + duracion * 1000);
+    console.log("Mostrando ahora:", { fechaInicio, fechaFin, duracion });
   } else if (is24Hours) {
+    // Manejo de imágenes con duración de 24 horas
     duracion = parseInt(is24Hours);
     fechaInicio = new Date();
     fechaFin = new Date(fechaInicio.getTime() + duracion * 1000);
+    console.log("Programado para 24 horas:", { fechaInicio, fechaFin, duracion });
   } else if (startDate && startTime && endDate && endTime) {
+    // Manejo de fechas específicas
     fechaInicio = new Date(`${startDate}T${startTime}`);
     fechaFin = new Date(`${endDate}T${endTime}`);
+    console.log("Programado con fechas específicas:", { fechaInicio, fechaFin });
   }
 
   if (files && files.length > 0) {
     files.forEach(file => {
       const ruta = file.path;
 
-      db2.run("INSERT INTO publicidad (ruta, fecha_inicio, fecha_fin, duracion, texto) VALUES (?, ?, ?, ?, ?)", 
-        [ruta, fechaInicio, fechaFin, duracion, text || null], (err) => {
+      db2.run(
+        "INSERT INTO publicidad (ruta, fecha_inicio, fecha_fin, duracion, shownow, fijo) VALUES (?, ?, ?, ?, ?, ?)", 
+        [ruta, fechaInicio, fechaFin, duracion || null, shownowValue], 
+        (err) => {
           if (err) {
-            console.error(err.message);
+            console.error("Error al insertar en la base de datos:", err.message);
           }
-        });
+        }
+      );
     });
     res.status(200).json({ message: 'Archivos subidos y datos guardados correctamente' });
   } else {
@@ -254,39 +101,48 @@ app.post('/upload-publicidad', auth.verifyToken, publicidadUpload.array('files')
   }
 });
 
-// Función para eliminar archivos expirados
-// function eliminarArchivosExpira2() {
-//   const now = new Date();
-//   const margen = 30 * 1000; // 1 minuto en milisegundos
+function eliminarArchivosExpira2() {
+  const now = new Date();
 
-//   db2.all("SELECT id, ruta, fecha_fin FROM publicidad", [], (err, rows) => {
-//     if (err) {
-//       console.error(err.message);
-//       return;
-//     }
+  db2.all("SELECT id, ruta, fecha_fin, shownow FROM publicidad", [], (err, rows) => {
+    if (err) {
+      console.error("Error al consultar la base de datos:", err.message);
+      return;
+    }
 
-//     rows.forEach((row) => {
-//       const fechaFin = new Date(row.fecha_fin);
+    rows.forEach((row) => {
+      const fechaFin = new Date(row.fecha_fin);
 
-//       if (fechaFin <= new Date(now.getTime() - margen)) {
-//         if (fs.existsSync(row.ruta)) {
-//           fs.unlinkSync(row.ruta);
-//           console.log(`Archivo eliminado: ${row.ruta}`);
-//         }
+      // Si shownow es -1, ignorar el archivo (no tiene fecha de caducidad).
+      if (row.shownow === -1) {
+        console.log(`Elemento con id ${row.id} no tiene caducidad. Ignorado.`);
+        return;
+      }
 
-//         db.run("DELETE FROM archivos WHERE id = ?", [row.id], (err) => {
-//           if (err) {
-//             console.error(err.message);
-//           }
-//         });
-//       }
-//     });
-//   });
-// }
+      // Si la fecha de caducidad ha pasado o el valor de shownow indica que debe eliminarse
+      if (fechaFin <= now || (row.shownow > 0 && fechaFin <= now)) {
+        // Eliminar el archivo si existe
+        if (fs.existsSync(row.ruta)) {
+          fs.unlinkSync(row.ruta);
+          console.log(`Archivo eliminado: ${row.ruta}`);
+        }
 
-// cron.schedule('* * * * *', () => {
-//   eliminarArchivosExpira2();
-// });
+        // Eliminar la entrada de la base de datos
+        db2.run("DELETE FROM publicidad WHERE id = ?", [row.id], (err) => {
+          if (err) {
+            console.error("Error al eliminar de la base de datos:", err.message);
+          } else {
+            console.log(`Entrada eliminada de la base de datos: id ${row.id}`);
+          }
+        });
+      }
+    });
+  });
+}
+
+cron.schedule('* * * * *', () => {
+  eliminarArchivosExpira2();
+});
 
 app.get('/marketing', auth.verifyToken, (req, res) => {
   const publicidadDir = path.join(__dirname, 'publicidad_uploads');
@@ -319,9 +175,14 @@ app.delete('/marketing/:filename', auth.verifyToken, (req, res) => {
   });
 });
 
+
+
+
 app.use(express.static('uploads'));
 app.use('/images', express.static('./publicidad_uploads'));
 app.use(bodyParser.json());
+
+// ################################ Material animación ################################################
 
 let currentTrack = null;
 
@@ -331,13 +192,13 @@ app.get('/files', (req, res) => {
       index: 0,
       url: `${process.env.BASE_URL}/jackpot.mp3`,
       title: 'Jackpot',
-      imageUrl: `${process.env.BASE_URL}/premio.gif`
+      imageUrl: `${process.env.BASE_URL}/bjack.gif`
     },
     {
       index: 1,
       url: `${process.env.BASE_URL}/superjackpot.mp3`,
       title: 'Super Jackpot',
-      imageUrl: `${process.env.BASE_URL}/premio.gif`
+      imageUrl: `${process.env.BASE_URL}/bsuper.gif`
     }
   ];
   res.json(files);
@@ -369,6 +230,8 @@ app.get('/images-list', (req, res) => {
     res.json(imageFiles);
   });
 });
+
+// ################################ Tabla usaurios ################################################
 
 app.post('/usuarios', (req, res) => {
   const { first_name, last_name, username, role, password } = req.body;

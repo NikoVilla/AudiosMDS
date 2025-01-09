@@ -124,16 +124,21 @@ const FullScreenPlayer = () => {
           {track.amount && (
             <div style={{ 
               position: 'absolute', 
-              left: '50%', 
-              top: '59%',
+              left: '46.5%', 
+              top:'31%',
               transform: 'translateX(-50%)', 
-              color: '#FFFFFF',
-              // color: '#E9BA38', 
+              color: 'transparent', 
               fontFamily: 'Anton', 
-              fontSize: '11vw',
-              textShadow: '4px 4px 8px rgba(0, 0, 0, 0.9)',
+              fontSize: '12vw',
+              WebkitTextStroke: '9px #FFFFFF', 
+              // textShadow: `
+              //   0 0 90px #D49250`, 
               textAlign: 'center',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              padding: '20px',
+              borderRadius: '15px',
+              display: 'inline-block',
+              width: '80%',
             }}>
               {formatAmount(track.amount)}
             </div>

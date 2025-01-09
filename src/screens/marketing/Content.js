@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Typography, Snackbar, Grid, createTheme, ThemeProvider, Checkbox, FormControlLabel} from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import TextSwitch from './../media/components/TextSwitch';
 import MuiAlert from '@mui/material/Alert';
 import InputFileUpload from './../media/components/Upload';
 import { uploadMarketing } from './ServiceMarketing';
@@ -18,8 +17,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 export default function Content() {
-  const [enabled, setEnabled] = useState(false);
-  const [text, setText] = useState('');
   const [files, setFiles] = useState([]);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
@@ -30,6 +27,7 @@ export default function Content() {
   const [endDate, setEndDate] = React.useState(dayjs());
   const [endTime, setEndTime] = React.useState(dayjs());
   const [is24Hours, setIs24Hours] = React.useState(false);
+  const [shownow, setNoExpiration] = useState(false);
 
   const theme = createTheme({
     palette: {
@@ -63,14 +61,30 @@ export default function Content() {
   });
 
   const handleFileChange = (newFiles) => {
-    const maxSize = 1.5 * 1024 * 1024; // 1.5 MB en bytes
+    const maxSize = 1.5 * 1024 * 1024;
     const allowedFormats = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
   
     const validFiles = [];
     const invalidFiles = [];
     const verticalFiles = [];
   
-    let filesToProcess = newFiles.length; // Contador para manejar eventos asincrónicos
+    let filesToProcess = newFiles.length;
+  
+    const checkCompletion = () => {
+      if (filesToProcess === 0) {
+        if (verticalFiles.length > 0) {
+          setAlertMessage("No se permiten archivos verticales. Elimínalos de los cargados.");
+          setAlertSeverity("error");
+          setAlertOpen(true);
+        } else if (invalidFiles.length > 0) {
+          setAlertMessage("Formato o tamaño de archivo inválido. Elimínalos de los cargados.");
+          setAlertSeverity("error");
+          setAlertOpen(true);
+        } else {
+          setFiles(validFiles);
+        }
+      }
+    };
   
     newFiles.forEach((file) => {
       // Validar tamaño y formato
@@ -93,22 +107,6 @@ export default function Content() {
         };
       }
     });
-  
-    const checkCompletion = () => {
-      if (filesToProcess === 0) {
-        if (verticalFiles.length > 0) {
-          setAlertMessage("No se permiten archivos verticales. Elimínalos de los cargados.");
-          setAlertSeverity("error");
-          setAlertOpen(true);
-        } else if (invalidFiles.length > 0) {
-          setAlertMessage("Formato o tamaño de archivo inválido. Elimínalos de los cargados.");
-          setAlertSeverity("error");
-          setAlertOpen(true);
-        } else {
-          setFiles(validFiles);
-        }
-      }
-    };
   };  
 
   const handleUpload = async () => {
@@ -118,16 +116,9 @@ export default function Content() {
       setAlertOpen(true);
       return;
     }
-
+  
     if (files.length > 15) {
       setAlertMessage("No se pueden subir más de 15 archivos.");
-      setAlertSeverity("error");
-      setAlertOpen(true);
-      return;
-    }
-  
-    if (enabled && text === "") {
-      setAlertMessage("Rellene el campo texto o deshabilítelo.");
       setAlertSeverity("error");
       setAlertOpen(true);
       return;
@@ -142,32 +133,40 @@ export default function Content() {
         formData.append("files", file);
       });
   
-      if (is24Hours) {
+      if (shownow) {
+        formData.append("shownow", -1);
+      } else if (is24Hours) {
         formData.append("is24Hours", 86400);
       } else {
-
+        // Validaciones de fecha y hora
         if (startDate.isBefore(dayjs(), 'day') || endDate.isBefore(dayjs(), 'day')) {
           setAlertMessage("La fecha de inicio o fin no puede ser inferior a la actual.");
           setAlertSeverity("error");
           setAlertOpen(true);
           return;
         }
+      
+        const startDateTime = startDate.hour(startTime.hour()).minute(startTime.minute());
+        const endDateTime = endDate.hour(endTime.hour()).minute(endTime.minute());
+      
+        if (endDateTime.isBefore(startDateTime)) {
+          setAlertMessage("La hora de fin no puede ser anterior a la hora de inicio.");
+          setAlertSeverity("error");
+          setAlertOpen(true);
+          return;
+        }
+      
         formData.append("startDate", startDate.format("YYYY-MM-DD"));
         formData.append("startTime", startTime.format("HH:mm"));
         formData.append("endDate", endDate.format("YYYY-MM-DD"));
         formData.append("endTime", endTime.format("HH:mm"));
-        console.log("Fechas y horas agregadas:", {
+        console.log("Programado para:", {
           startDate: startDate.format("YYYY-MM-DD"),
           startTime: startTime.format("HH:mm"),
           endDate: endDate.format("YYYY-MM-DD"),
           endTime: endTime.format("HH:mm"),
         });
-      }
-
-      if (enabled) {
-        formData.append("text", text);
-        console.log("Texto agregado:", text);
-      }
+      }      
   
       console.log("Datos enviados al backend:", formData);
       const response = await uploadMarketing(formData);
@@ -184,7 +183,8 @@ export default function Content() {
     } finally {
       setIsUploading(false);
     }
-  };  
+  };
+  
   
   const handleCloseAlert = () => {
     setAlertOpen(false);
@@ -193,16 +193,20 @@ export default function Content() {
   const handle24HoursChange = (event) => {
     setIs24Hours(event.target.checked);
   };
+
+  const handleNoExpirationChange = (event) => {
+    setNoExpiration(event.target.checked);
+  };
   
-  useEffect(() => {
-    if (alertSeverity === 'success' && alertOpen) {
-      const timer = setTimeout(() => {
-        window.location.reload();
-      }, 1800); // 2 segundos de retraso
+  // useEffect(() => {
+  //   if (alertSeverity === 'success' && alertOpen) {
+  //     const timer = setTimeout(() => {
+  //       window.location.reload();
+  //     }, 1800); // 2 segundos de retraso
   
-      return () => clearTimeout(timer);
-    }
-  }, [alertSeverity, alertOpen]);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [alertSeverity, alertOpen]);
 
   return (
     <Box
@@ -219,7 +223,7 @@ export default function Content() {
           <InputFileUpload onFileChange={handleFileChange} />
         </Grid>
   
-        {/* <Grid item xs={12}>
+        <Grid item xs={12}>
           <Typography
             sx={{
               fontFamily: 'Nunito, sans-serif',
@@ -228,7 +232,7 @@ export default function Content() {
               mt: 3,
             }}
           >
-            Seleccionar opciones de visualización
+            Seleccionar tiempo de expiración de la imagen
           </Typography>
         </Grid>
   
@@ -238,19 +242,30 @@ export default function Content() {
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   <FormControlLabel
-                    control={<Checkbox checked={is24Hours} onChange={handle24HoursChange} />}
-                    label="Usar 24 horas"
+                    control={
+                      <Checkbox checked={shownow} onChange={handleNoExpirationChange} />
+                    }
+                    label="Sin tiempo de expiración"
                   />
                 </Grid>
   
-                {!is24Hours && (
+                {!shownow && (
+                  <Grid item xs={12}>
+                    <FormControlLabel
+                      control={<Checkbox checked={is24Hours} onChange={handle24HoursChange} />}
+                      label="Usar 24 horas"
+                    />
+                  </Grid>
+                )}
+  
+                {!shownow && !is24Hours && (
                   <>
                     <Grid item xs={12} sm={6}>
                       <DemoContainer components={['TimePicker']}>
                         <TimePicker
-                          label="Hora de inicio"
+                          label="Hora de Inicio"
                           value={startTime}
-                          onChange={setStartTime}
+                          onChange={(newValue) => setStartTime(newValue)}
                           sx={{
                             height: '70%',
                             backgroundColor: '#262626',
@@ -258,6 +273,9 @@ export default function Content() {
                             '& .MuiOutlinedInput-notchedOutline': { borderColor: '#FFA800' },
                             '& .MuiSvgIcon-root': { color: '#FFA800' },
                             '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#FFA800' },
+                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#FFA800',
+                            },
                           }}
                         />
                       </DemoContainer>
@@ -266,9 +284,9 @@ export default function Content() {
                     <Grid item xs={12} sm={6}>
                       <DemoContainer components={['TimePicker']}>
                         <TimePicker
-                          label="Hora de fin"
+                          label="Hora de Fin"
                           value={endTime}
-                          onChange={setEndTime}
+                          onChange={(newValue) => setEndTime(newValue)}
                           sx={{
                             height: '70%',
                             backgroundColor: '#262626',
@@ -276,6 +294,9 @@ export default function Content() {
                             '& .MuiOutlinedInput-notchedOutline': { borderColor: '#FFA800' },
                             '& .MuiSvgIcon-root': { color: '#FFA800' },
                             '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#FFA800' },
+                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#FFA800',
+                            },
                           }}
                         />
                       </DemoContainer>
@@ -284,9 +305,9 @@ export default function Content() {
                     <Grid item xs={12} sm={6}>
                       <DemoContainer components={['DatePicker']}>
                         <DatePicker
-                          label="Fecha de inicio"
+                          label="Fecha de Inicio"
                           value={startDate}
-                          onChange={setStartDate}
+                          onChange={(newValue) => setStartDate(newValue)}
                           sx={{
                             height: '70%',
                             backgroundColor: '#262626',
@@ -294,6 +315,9 @@ export default function Content() {
                             '& .MuiOutlinedInput-notchedOutline': { borderColor: '#FFA800' },
                             '& .MuiSvgIcon-root': { color: '#FFA800' },
                             '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#FFA800' },
+                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#FFA800',
+                            },
                           }}
                         />
                       </DemoContainer>
@@ -302,9 +326,9 @@ export default function Content() {
                     <Grid item xs={12} sm={6}>
                       <DemoContainer components={['DatePicker']}>
                         <DatePicker
-                          label="Fecha de fin"
+                          label="Fecha de Fin"
                           value={endDate}
-                          onChange={setEndDate}
+                          onChange={(newValue) => setEndDate(newValue)}
                           sx={{
                             height: '70%',
                             backgroundColor: '#262626',
@@ -312,6 +336,9 @@ export default function Content() {
                             '& .MuiOutlinedInput-notchedOutline': { borderColor: '#FFA800' },
                             '& .MuiSvgIcon-root': { color: '#FFA800' },
                             '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#FFA800' },
+                            '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#FFA800',
+                            },
                           }}
                         />
                       </DemoContainer>
@@ -322,15 +349,7 @@ export default function Content() {
             </LocalizationProvider>
           </ThemeProvider>
         </Grid>
-  
-        <Grid item xs={12}>
-          <TextSwitch
-            enabled={enabled}
-            setEnabled={setEnabled}
-            text={text}
-            setText={setText}
-          />
-        </Grid> */}
+
   
         <Grid item xs={12}>
           <Button
@@ -339,10 +358,10 @@ export default function Content() {
             onClick={handleUpload}
             disabled={isUploading}
             sx={{
-              mt: 0.5,
+              mt: 3,
               width: '100%',
               textTransform: 'none',
-              backgroundColor: isUploading ? 'grey' : '#FFA800',
+              backgroundColor: isUploading ? 'grey' : '#28a745',
               color: isUploading ? 'white' : 'black',
               fontSize: { xs: 11, sm: 15 },
               fontFamily: 'Nunito, sans-serif',

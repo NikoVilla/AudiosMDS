@@ -122,7 +122,7 @@ export default function Sidebar({ open, toggleDrawer }) {
         </List>
         <Divider sx={{ borderColor: 'orange' }} />
         <ListItem>
-          <ListItemText primary="Pantallas Completas" sx={{ color: 'white' }} />
+          <ListItemText primary="Pantalla completa" sx={{ color: 'white' }} />
         </ListItem>
         {[
           { text: 'Audios Fullscreen', icon: <AspectRatioIcon />, path: '/audios/sala', roles: ['Administrador', 'Taquilla', 'Slot'] },
