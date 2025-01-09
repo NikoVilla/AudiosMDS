@@ -5,11 +5,13 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const sqlite3 = require('sqlite3').verbose();
+const schedule = require('node-schedule');
 const cron = require('node-cron');
 const auth = require('./auth');
 const app = express();
 require('dotenv').config();
 const port = 3001;
+
 
 app.use(cors({
   origin: '*',
@@ -202,7 +204,6 @@ app.post('/set-time', (req, res) => {
     return res.status(400).json({ message: 'Datos incompletos: se requieren imageName y fijo.' });
   }
 
-  // Buscar la imagen en la base de datos y actualizar la columna `fijo`
   db2.run(
     "UPDATE publicidad SET fijo = ? WHERE ruta LIKE ?",
     [fijo, `%${imageName}%`],
@@ -213,18 +214,47 @@ app.post('/set-time', (req, res) => {
       }
 
       if (this.changes === 0) {
-        // Si no se actualizó ninguna fila
         return res.status(404).json({ message: 'Imagen no encontrada en la base de datos.' });
       }
 
-      // Éxito
       res.status(200).json({ message: 'Valor de fijo actualizado correctamente.' });
     }
   );
 });
 
+const checkTimers = () => {
+  db2.all("SELECT ruta, fijo FROM publicidad", [], (err, rows) => {
+    if (err) {
+      console.error("Error al consultar la base de datos:", err.message);
+      return;
+    }
 
+    rows.forEach(row => {
+      if (row.fijo > 0) {
+        const nuevoFijo = row.fijo - 1;
 
+        console.log(`Imagen: ${row.ruta} | Tiempo restante: ${nuevoFijo}s`);
+
+        db2.run(
+          "UPDATE publicidad SET fijo = ? WHERE ruta = ?",
+          [nuevoFijo, row.ruta],
+          function (err) {
+            if (err) {
+              console.error("Error al actualizar la base de datos:", err.message);
+              return;
+            }
+
+            if (nuevoFijo === 0) {
+              console.log(`La imagen ${row.ruta} ahora está inactiva.`);
+            }
+          }
+        );
+      }
+    });
+  });
+};
+
+setInterval(checkTimers, 1000);
 
 app.use(express.static('uploads'));
 app.use('/images', express.static('./publicidad_uploads'));
