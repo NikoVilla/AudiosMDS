@@ -1,12 +1,9 @@
 import axios from 'axios';
 
-// Obtén la URL del backend desde las variables de entorno
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-// Servicio para subir medios
 export const uploadMedia = async (formData) => {
   try {
-    // Obtén el token almacenado localmente
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -17,24 +14,21 @@ export const uploadMedia = async (formData) => {
       throw new Error('URL del backend no definida en las variables de entorno.');
     }
 
-    // Realiza la solicitud POST al backend
     const response = await axios.post(`${backendUrl}/upload-media`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data', // Indica que el cuerpo es FormData
-        Authorization: `Bearer ${token}`, // Token de autorización
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
       },
     });
 
-    // Devuelve la respuesta del servidor
     return response.data;
   } catch (error) {
     console.error('Error al subir medios:', error);
 
-    // Manejo de errores para obtener mensajes útiles
     const errorMessage = 
-      error.response?.data?.message || // Mensaje proporcionado por el backend
-      error.message ||                 // Mensaje del propio error
-      'Error desconocido al subir los medios'; // Fallback
+      error.response?.data?.message || 
+      error.message ||                
+      'Error desconocido al subir los medios'; 
 
     throw new Error(errorMessage);
   }

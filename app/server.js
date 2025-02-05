@@ -173,7 +173,15 @@ app.delete('/marketing/:filename', auth.verifyToken, (req, res) => {
       console.error('Error al eliminar el archivo:', err);
       return res.status(500).json({ message: 'Error al eliminar el archivo.' });
     }
-    res.status(200).json({ message: 'Archivo eliminado correctamente.' });
+    // Eliminar la referencia de la base de datos
+    db2.run("DELETE FROM publicidad WHERE ruta LIKE ?", [`%${filename}%`], (dbErr) => {
+      if (dbErr) {
+        console.error('Error al eliminar la referencia de la base de datos:', dbErr.message);
+        return res.status(500).json({ message: 'Error al eliminar la referencia en la base de datos.' });
+      }
+      
+      res.status(200).json({ message: 'Archivo y referencia eliminados correctamente.' });
+    });
   });
 });
 
@@ -204,6 +212,17 @@ app.post('/set-time', (req, res) => {
     return res.status(400).json({ message: 'Datos incompletos: se requieren imageName y fijo.' });
   }
 
+  db2.serialize(() => {
+    // Si el valor de `fijo` es mayor que 0, asegurarse de desactivar todas las demás imágenes
+    if (fijo > 0) {
+      db2.run("UPDATE publicidad SET fijo = 0 WHERE ruta NOT LIKE ?", [`%${imageName}%`], (err) => {
+        if (err) {
+          console.error("Error al desactivar otras imágenes:", err.message);
+          return res.status(500).json({ message: 'Error al desactivar otras imágenes.' });
+        }
+      });
+    }
+
   db2.run(
     "UPDATE publicidad SET fijo = ? WHERE ruta LIKE ?",
     [fijo, `%${imageName}%`],
@@ -218,8 +237,9 @@ app.post('/set-time', (req, res) => {
       }
 
       res.status(200).json({ message: 'Valor de fijo actualizado correctamente.' });
-    }
-  );
+      }
+    );
+  });
 });
 
 const checkTimers = () => {

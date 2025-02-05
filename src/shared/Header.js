@@ -29,10 +29,10 @@ export default function Header({ toggleDrawer }) {
         justifyContent: 'space-between', 
         position: 'relative', 
         width: '100%',
-        height: '65px', // Asegura que el Header tenga una altura fija
+        height: '65px', 
         backgroundColor: '#000000', 
-        overflow: 'hidden', // Evita cualquier desbordamiento
-        boxSizing: 'border-box', // Asegura que el padding no afecte el tamaño total del Box
+        overflow: 'hidden', 
+        boxSizing: 'border-box', 
       }}
     >
       {/* Imagen del logo */}
@@ -41,9 +41,9 @@ export default function Header({ toggleDrawer }) {
         src={logo}
         alt="Logo"
         sx={{
-          height: '100%', // La imagen ocupará todo el alto disponible
-          width: 'auto', // Mantiene la proporción de la imagen
-          objectFit: 'contain', // Asegura que la imagen no se deforme
+          height: '100%', 
+          width: 'auto', 
+          objectFit: 'contain', 
           marginLeft: 2, 
         }}
       />
@@ -61,7 +61,7 @@ export default function Header({ toggleDrawer }) {
           overflow: 'hidden', 
           gap: 0.5,
         }} 
-        onClick={toggleDrawer(true)} // Abre el sidebar aunque no esté cargado
+        onClick={toggleDrawer(true)}
       >
         <Box sx={{ display: 'flex', justifyContent: 'flex-end'}}>
           <Typography 

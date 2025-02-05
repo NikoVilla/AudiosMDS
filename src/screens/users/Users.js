@@ -300,12 +300,12 @@ export default function EnhancedTable() {
   };
 
   const handleAddUser = () => {
-    setUserId(null); // No hay userId cuando se agrega un nuevo usuario
+    setUserId(null); 
     setOpenModal(true);
   };
 
   const handleEditUser = (id) => {
-    setUserId(id); // Establece el userId del usuario que se va a editar
+    setUserId(id); 
     setOpenModal(true);
   };
 

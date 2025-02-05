@@ -75,7 +75,7 @@ export default function InputFileUpload({ onFileChange }) {
           '& svg': { color: 'black' },
           height: '60px',
           textTransform: 'none',
-          fontSize: { xs: 11, sm: 16}, // Ajusta el tamaño según la pantalla
+          fontSize: { xs: 11, sm: 16}, 
           fontFamily: 'Nunito, sans-serif',
           fontWeight: 700,
         }}
@@ -198,7 +198,7 @@ export default function InputFileUpload({ onFileChange }) {
           fontSize: { xs: 8, sm: 14 } 
         }}
       >
-        Formatos: jpg, png, gif. Tamaño max: 1.5 MB. Subir foto en horizontal.
+        Formatos: jpg, png, gif. Tamaño max: 1.5 MB. Subir 1-15 fotos por carga, en horizontal.
       </Typography>
     </Box>
   );

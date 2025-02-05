@@ -46,17 +46,17 @@ export default function UserModal({ open, onClose, refreshTable }) {
       return;
     }
   
-    const normalizedRoles = [...role].sort(); // Ordenar para garantizar que el orden no importe
+    const normalizedRoles = [...role].sort();
     const isAdminCombination =
       normalizedRoles.length === 3 &&
       normalizedRoles.includes('Boleteria') &&
       normalizedRoles.includes('Marketing') &&
       normalizedRoles.includes('Crupier');
 
-    // Determinar el texto de roles basado en la combinación
+
     const roleText = isAdminCombination
-      ? 'Administrador' // Combinar "Boleteria", "Marketing", y "Crupier" como "Administrador"
-      : role.join(', '); // Roles normales separados por comas
+      ? 'Administrador' 
+      : role.join(', ');
   
     const userData = {
       first_name: name,
@@ -72,8 +72,8 @@ export default function UserModal({ open, onClose, refreshTable }) {
     try {
       await createUser(userData);
       alert('Usuario creado con éxito');
-      refreshTable(); // Refrescar la tabla
-      handleCancel(); // Limpiar el formulario y cerrar el modal
+      refreshTable(); 
+      handleCancel();
     } catch (error) {
       alert('Error al crear el usuario');
     }
@@ -115,7 +115,6 @@ export default function UserModal({ open, onClose, refreshTable }) {
           borderWidth: 2,
           borderColor: '#FFA800',
           borderStyle: 'solid',
-          // maxWidth: '90vw',
         },
       }}
     >

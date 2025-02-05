@@ -273,7 +273,7 @@ const ViewMarketing = () => {
                   justifyContent: 'center',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 2, // Espacio entre el menú y el botón
+                  gap: 2, 
                 }}
               >
                 <Select
@@ -334,10 +334,12 @@ const ViewMarketing = () => {
               </IconButton>
               <Box
                 sx={{
-                  height: 500,
+                  height: { xs: '50vh', sm: '40vh', md: '45vh', lg: '55vh' }, 
+                  width: '100%',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
+                  marginTop: { xs: '60px', sm: '70px', md: '80px' }, 
                 }}
               >
                 {imageLoading && (
@@ -358,6 +360,7 @@ const ViewMarketing = () => {
                   sx={{
                     maxWidth: '100%',
                     maxHeight: '100%',
+                    objectFit: 'contain',
                     borderRadius: 1,
                     display: imageLoading ? 'none' : 'block',
                     transition: 'opacity 0.3s ease-in-out',
@@ -372,7 +375,7 @@ const ViewMarketing = () => {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  height: 50, // Altura fija para evitar movimientos
+                  height: 50,
                 }}
               >
                 <Button

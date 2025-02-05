@@ -11,6 +11,7 @@ const FullScreenPlayer = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const [fija, setFija] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const formatAmount = (amount) => {
     const numericValue = Number(amount);
@@ -110,18 +111,15 @@ const FullScreenPlayer = () => {
 
     return () => clearInterval(intervalId);
   }, []);
-
+  
   useEffect(() => {
     if (!track && images.length > 0) {
       const intervalId = setInterval(() => {
         setFade(false);
         setTimeout(() => {
-          setCurrentImageIndex((prevIndex) => {
-            const nextIndex = (prevIndex + 1) % images.length;
-            return images[nextIndex] ? nextIndex : 0;
-          });
+          setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
           setFade(true);
-        }, 1000); 
+        }, 1000);
       }, 5000);
 
       return () => clearInterval(intervalId);
@@ -175,35 +173,29 @@ const FullScreenPlayer = () => {
           height: '100%', 
           objectFit: 'cover' 
         }} />
+      ) : images.length > 0 ? (
+        <Fade in={fade} timeout={1000}>
+          <img
+            src={images[currentImageIndex]?.url || ''}
+            alt="Slideshow"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        </Fade>
       ) : (
-        images.length > 0 ? (
-          <Fade in={fade} timeout={1000}>
-            {images[currentImageIndex] ? (
-              <img
-                src={images[currentImageIndex].url}
-                alt="Clonacion"
-                style={{ 
-                  width: '100%', 
-                  height: '100%', 
-                  objectFit: 'cover' 
-                }}
-              />
-            ) : null}
-          </Fade>
-        ) : (
-          <div style={{ 
-            width: '100%', 
-            height: '100%', 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center' 
-          }}>
-            <p style={{ color: 'white', fontSize: '2vw' }}>Cargando imágenes...</p>
-          </div>
-        )
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <p style={{ color: 'white', fontSize: '2vw' }}>No hay imágenes disponibles.</p>
+        </div>
       )}
     </div>
-  );  
+  );
 };
 
 export default FullScreenPlayer;

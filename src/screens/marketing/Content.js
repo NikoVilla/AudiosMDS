@@ -91,7 +91,7 @@ export default function Content() {
       if (file.size > maxSize || !allowedFormats.includes(file.type)) {
         invalidFiles.push(file);
         filesToProcess--;
-        checkCompletion(); // Verificar si ya procesamos todos los archivos
+        checkCompletion();
       } else {
         // Validar orientación (dimensiones de la imagen)
         const img = new Image();
@@ -103,7 +103,7 @@ export default function Content() {
             validFiles.push(file);
           }
           filesToProcess--;
-          checkCompletion(); // Verificar si ya procesamos todos los archivos
+          checkCompletion();
         };
       }
     });
@@ -198,15 +198,15 @@ export default function Content() {
     setNoExpiration(event.target.checked);
   };
   
-  // useEffect(() => {
-  //   if (alertSeverity === 'success' && alertOpen) {
-  //     const timer = setTimeout(() => {
-  //       window.location.reload();
-  //     }, 1800); // 2 segundos de retraso
+  useEffect(() => {
+    if (alertSeverity === 'success' && alertOpen) {
+      const timer = setTimeout(() => {
+        window.location.reload();
+      }, 1800); 
   
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [alertSeverity, alertOpen]);
+      return () => clearTimeout(timer);
+    }
+  }, [alertSeverity, alertOpen]);
 
   return (
     <Box

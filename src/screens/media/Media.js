@@ -5,11 +5,11 @@ import Header from '../../shared/Header';
 import Content from './Content';
 import ViewMedia from './ViewMedia';
 import { useState } from 'react';
-// import { useLocation } from 'react-router-dom'; // Importa useLocation de React Router
+// import { useLocation } from 'react-router-dom';
 
 export default function Media() {
-  // const location = useLocation(); // Obtiene la ubicación actual
-  const [open, setOpen] = useState(false); // Inicialmente el sidebar está cerrado
+  // const location = useLocation();
+  const [open, setOpen] = useState(false); 
   const [activeItem, setActiveItem] = useState('');
 
   const toggleDrawer = (newOpen) => () => {

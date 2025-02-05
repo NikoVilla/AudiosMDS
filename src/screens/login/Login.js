@@ -22,7 +22,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
-  const [connectionError, setConnectionError] = useState(''); // Estado para el error de conexión
+  const [connectionError, setConnectionError] = useState('');
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -43,7 +43,7 @@ const Login = () => {
       );
   
       const { token } = response.data;
-      localStorage.setItem('token', token); // Guarda el token en el almacenamiento local
+      localStorage.setItem('token', token);
       
       login();
       setUsername('');
@@ -70,7 +70,7 @@ const Login = () => {
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'center',
-        overflow: 'auto', // Evita el desbordamiento
+        overflow: 'auto', 
       }}
     >
       <Container
@@ -95,9 +95,9 @@ const Login = () => {
             backgroundColor: '#000000',
             width: '100%',
             maxWidth: 400,
-            justifyContent: 'space-between', // Ajusta para que el contenido se distribuya mejor
+            justifyContent: 'space-between',
             boxSizing: 'border-box',
-            overflow: 'auto', // Asegura el desplazamiento dentro del contenedor
+            overflow: 'auto',
             '@media (max-width: 600px)': {
               padding: 2,
               maxWidth: '100%',

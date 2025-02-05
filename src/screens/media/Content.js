@@ -65,14 +65,14 @@ export default function Content() {
   });
 
   const handleFileChange = (newFiles) => {
-    const maxSize = 1.5 * 1024 * 1024; // 1.5 MB in bytes
+    const maxSize = 1.5 * 1024 * 1024; 
     const allowedFormats = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
   
     const validFiles = [];
     const invalidFiles = [];
     const verticalFiles = [];
   
-    let filesToProcess = newFiles.length; // Counter to handle asynchronous events
+    let filesToProcess = newFiles.length; 
   
     const checkCompletion = () => {
       if (filesToProcess === 0) {
@@ -95,9 +95,8 @@ export default function Content() {
       if (file.size > maxSize || !allowedFormats.includes(file.type)) {
         invalidFiles.push(file);
         filesToProcess--;
-        checkCompletion(); // Check if all files are processed
+        checkCompletion(); 
       } else {
-        // Validate orientation (image dimensions)
         const img = new Image();
         img.src = URL.createObjectURL(file);
         img.onload = () => {
@@ -107,7 +106,7 @@ export default function Content() {
             validFiles.push(file);
           }
           filesToProcess--;
-          checkCompletion(); // Check if all files are processed
+          checkCompletion();
         };
       }
     });
